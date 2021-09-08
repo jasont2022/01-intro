@@ -96,20 +96,22 @@ the compiler how to interpret this expression. (And, note the warning
 issued by the compiler for this out of range number!)
 -}
 
-bigInt :: Int
-bigInt = 12345678901234567890
+-- bigInt :: Int
+-- bigInt = 12345678901234567890
 
 {-
 Compare the value of a extra-large `Integer`
 -}
 
 -- >>> bigInteger
+-- 12345678901234567890
 
 {-
 with an `Int`
 -}
 
 -- >>> bigInt
+-- -6101065172474983726
 
 {-
 Above, we declared the type of an expression separately from giving it a
@@ -118,6 +120,7 @@ still annotate it with its type using `::`.
 -}
 
 -- >>> 31 * (42 + 56) :: Integer
+-- 3038
 
 {-
 More generally, the type annotation can be attached to any subexpression, not
@@ -125,6 +128,7 @@ just at the top level.
 -}
 
 -- >>> (31 :: Integer) * (42 + 56)
+-- 3038
 
 {-
 It is good style to annotate the type of *every* declaration in a Haskell
@@ -155,14 +159,19 @@ Furthermore, you'll also find characters, strings and boolean values.
 -}
 
 -- >>> 'a' :: Char                 -- characters
+-- 'a'
 
 -- >>> "abcd" :: String            -- strings
+-- "abcd"
 
 -- >>> "cis" ++ "552"              -- string concatenation
+-- "cis552"
 
 -- >>> True :: Bool                -- boolean values
+-- True
 
 -- >>> 1 <= 3 || False && 3 > 2    -- boolean operators, comparisons
+-- True
 
 {-
 What is a little different about Haskell is that everything is an expression,
@@ -171,6 +180,7 @@ expressions.
 -}
 
 -- >>> (if ex > 28 then 1 else 0) + 2 :: Int
+-- 2
 
 {-
 Now the last basic type, shown below, is subtle. It is a special constant,
@@ -181,6 +191,7 @@ this basic type is that there is only *one* value with type `()`.
 -}
 
 -- >>> () :: ()            -- 'unit' (both value and type have the same syntax)
+-- ()
 
 {-
 What is Abstraction?
@@ -210,12 +221,14 @@ We call functions by providing them with arguments.
 -}
 
 -- >>> pat 31 42 56
+-- 3038
 
 {-
 No parentheses are necessary, unless the argument itself is a compound expression.
 -}
 
 -- >>> pat (30 + 1) 42 56
+-- 3038
 
 {-
 The important question is not "What does this function do?"
@@ -286,7 +299,7 @@ writing their arguments afterwards.
 -}
 
 p0 :: Int
-p0 = (+) 2 4
+p0 = (+) 2 4 -- plus function
 
 {-
 Likewise we can use alphabetic name in backquotes as infix.
@@ -470,7 +483,7 @@ query2 :: IO String -- compare this type to `query` above.
 query2 = do
   putStr "What is your name? "
   n <- getLine
-  return n
+  return n -- not what you think it is like in Java, wraps back up n
 
 {-
 Furthermore, there is no need to name a value if it is just going to be
@@ -574,7 +587,7 @@ arguments, but in reality, it has just one. We use a *pattern* to name the
 three components of the tuple for use in the function.
 -}
 
-tpat :: (Int, Int, Int) -> Int
+tpat :: (Int, Int, Int) -> Int -- can't be partial applied
 tpat (a, b, c) = a * (b + c)
 
 {-
@@ -607,16 +620,19 @@ pat4 :: ((Int, Int), Int) -> Int
 pat4 ((a, b), c) = a * (b + c)
 
 -- >>> pat4 tup4
+-- 5
 
 pat5 :: (Int, (Int, Int)) -> Int
 pat5 (a, (b, c)) = a * (b + c)
 
 -- >>> pat5 tup5
+-- 5
 
 pat6 :: (Int, Int, Int) -> Int
 pat6 (a, b, c) = a * (b + c)
 
 -- >>> pat6 tup6
+-- 5
 
 {-
 We can stick anything in tuples, even IO actions.
@@ -700,7 +716,12 @@ error if it is ever evaluated.
 -}
 
 jn' :: Maybe (Maybe a) -> Maybe a
-jn' = undefined
+jn' (Just x) = x
+jn' Nothing = Nothing
+
+jn'' :: Maybe (Maybe a) -> Maybe a
+jn'' (Just (Just x)) = Just x
+jn'' _ = Nothing
 
 {-
 'Maybe' is useful for partial functions
@@ -775,6 +796,7 @@ What is the value of l7?
 -}
 
 -- >>> l7
+-- "hello 552!"
 --
 
 {-
@@ -804,14 +826,17 @@ Try evaluating `c1` and `c2`.
 -}
 
 -- >>> c1
+-- [True,False,False]
 --
 -- >>> c2
+-- [1]
 --
 
 {-
 And check out the type of `c3`.
 -}
 
+c3 :: [[a]]
 c3 = [] : []
 
 {-
@@ -838,8 +863,10 @@ Try evaluating `s1` and `s2`.
 -}
 
 -- >>> s1
+-- "abc"
 --
 -- >>> s2
+-- "abc"
 --
 
 {-
@@ -956,7 +983,7 @@ range :: Int -> Int -> [Int]
 **Step 3**: Define the function. This part is for you to do for your quiz.
 -}
 
-range i j = undefined
+range i j = if i > j then [] else (if i == j then [i] else i : range (i + 1) j)
 
 {-
 **Step 4**: Run the tests.
@@ -1095,7 +1122,9 @@ listIncr :: [Int] -> [Int]
 **Step 3**: Define the function.
 -}
 
-listIncr = undefined
+listIncr [] = []
+listIncr [x] = [x + 1]
+listIncr (x : xs) = x + 1 : listIncr xs
 
 {-
 **Step 4**: Run the tests.
